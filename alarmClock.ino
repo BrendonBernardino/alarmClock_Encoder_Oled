@@ -36,8 +36,9 @@ extern void Menu(void);
 extern void MenuHora(void);
 extern void MenuAlarme(void);
 extern void MenuData(void);
-extern void Hora();
-extern void Data();
+extern void ConfigHora(void);
+extern void ConfigAlarme(void);
+extern void ConfigData(void);
 
 void giraEncoder();
 void wait4Standby();
@@ -72,10 +73,12 @@ void setup() {
 
 // main loop, work is done by interrupt service routines, this one only prints stuff
 void loop() {
+  //// ESPERA CLICK DO BOTAO PARA INICIALIZAR
   while(flag_init == 0) {
     digitalWrite(PA5, LOW);
     botaoApertado = false;
   }
+  ////
   digitalWrite(PA5, HIGH);
 
   rotating = true;  // reset the debouncer
@@ -93,6 +96,12 @@ void loop() {
         Serial.println(millis() - tempoDisplay);
         Serial.println("Menu Hora");
         MenuHora();
+        if(SwitchPress) {
+          Serial.println("====== HORA SELECIONADA ======");
+          Serial.print("menu: ");
+          Serial.println(menu);
+          SwitchPress = false;
+        }
         menu = constrain( (menu + (encoderPos - lastReportedPos) ), menuMin, menuMax);
         giraEncoder();
         wait4Standby(); //espera para standby
@@ -146,6 +155,12 @@ void loop() {
           MenuAlarme();
           Serial.println(millis() - tempoDisplay);
           Serial.println("Menu Alarme");
+          if(SwitchPress) {
+            Serial.println("====== ALARME SELECIONADO ======");
+            Serial.print("menu: ");
+            Serial.println(menu);
+            SwitchPress = false;
+          }
           menu = constrain( (menu + (encoderPos - lastReportedPos) ), menuMin, menuMax);
           giraEncoder();
           wait4Standby(); //espera para standby
@@ -167,6 +182,12 @@ void loop() {
         MenuData();
         Serial.println(millis() - tempoDisplay);
         Serial.println("Menu Data");
+        if(SwitchPress) {
+          Serial.println("====== DATA SELECIONADA ======");
+          Serial.print("menu: ");
+          Serial.println(menu);
+          SwitchPress = false;
+        }
         menu = constrain( (menu + (encoderPos - lastReportedPos) ), menuMin, menuMax);
         giraEncoder();
         wait4Standby(); //espera para standby

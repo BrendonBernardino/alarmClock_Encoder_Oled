@@ -1,11 +1,11 @@
-void Menu_standy();
-void Menu();
-void MenuHora();
-void MenuAlarme();
-void MenuData();
-void Hora();
-//void Alarme();
-void Data();
+void Menu_standy(void);
+void Menu(void);
+void MenuHora(void);
+void MenuAlarme(void);
+void MenuData(void);
+void ConfigHora(void);
+void ConfigAlarme(void);
+void ConfigData(void);
 
 void Menu_standby(void) {
   u8g2.clearBuffer();
@@ -250,7 +250,7 @@ void MenuData(void) {
   u8g2.sendBuffer();          // transfer internal memory to the display
 }
 
-void Hora(void) {
+void ConfigHora(void) {
   u8g2.clearBuffer();          // clear the internal memory
   u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
   u8g2.drawStr(49,8,"HORA");  // write something to the internal memory
@@ -264,7 +264,21 @@ void Hora(void) {
   u8g2.sendBuffer();          // transfer internal memory to the display
 }
 
-void Data(void) {
+void ConfigAlarme(void) {
+  u8g2.clearBuffer();          // clear the internal memory
+  u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
+  u8g2.drawStr(49,8,"HORA");  // write something to the internal memory
+  u8g2.setFont(u8g2_font_u8glib_4_tr);  // choose a suitable font
+  u8g2.drawButtonUTF8(115, 6, U8G2_BTN_BW1|U8G2_BTN_HCENTER, 0,  2,  0, "OK" );
+//  u8g2.drawStr(49,8,"OK");  // write something to the internal memory
+  u8g2.setFont(u8g2_font_inb21_mn);
+  u8g2.drawStr(20,30,"12");
+  u8g2.drawStr(60,30,":");
+  u8g2.drawStr(80,30,"30");
+  u8g2.sendBuffer();          // transfer internal memory to the display
+}
+
+void ConfigData(void) {
   u8g2.clearBuffer();          // clear the internal memory
   u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
   u8g2.drawStr(49,8,"DATA");  // write something to the internal memory
