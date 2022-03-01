@@ -82,6 +82,8 @@ U8G2_SSD1306_128X32_UNIVISION_F_SW_I2C u8g2(U8G2_R0, PB6, PB7, U8X8_PIN_NONE);
 extern void gravaAlarme(uint8_t _alarme_num, uint16_t _hora, uint16_t _minutos);
 extern uint16_t leAlarme(uint8_t _alarme_num);
 
+void gravaAlarme(uint8_t _alarme_num, uint16_t _hora, uint16_t _minutos);
+uint16_t leAlarme(uint8_t _alarme_num);
 //TELAS
 extern void Menu_init(void);
 extern void Menu_standby(int _hora, int _minuto);
@@ -275,6 +277,9 @@ void loop() {
                   SelectAlarme(menuAlarmeSelection);
                   if(SwitchPress) { ////TELA ALARME 1:
                     SwitchPress = false;
+                    uint16_t horamin_temp = leAlarme(menuAlarmeSelection);
+                    horaAlarme_config = horamin_temp >> 8;
+                    minutoAlarme_config = horamin_temp;
                     Serial.println("ALARME 1");
                     retornarA1 = false;
                     while(retornarA1 == false) {
@@ -374,6 +379,7 @@ void loop() {
                               Serial.println("RETORNAR");
                               SwitchPress = false;
                               retornarA1 = true;
+                              gravaAlarme(menuAlarmeSelection, horaAlarme_config, minutoAlarme_config);
                               SelectAlarme(menuAlarmeSelection);
                             }
                             menuA1 = constrain( (menuA1 + (encoderPos - lastReportedPos) ), menuMin, 4); //4 menus
@@ -396,6 +402,9 @@ void loop() {
                   SelectAlarme(menuAlarmeSelection);
                   if(SwitchPress) { ////TELA ALARME 1:
                     SwitchPress = false;
+                    uint16_t horamin_temp = leAlarme(menuAlarmeSelection);
+                    horaAlarme2_config = horamin_temp >> 8;
+                    minutoAlarme2_config = horamin_temp;
                     Serial.println("ALARME 2");
                     retornarA2 = false;
                     while(retornarA2 == false) {
@@ -496,6 +505,7 @@ void loop() {
                               SwitchPress = false;
                               retornarA2 = true;
                               SelectAlarme(menuAlarmeSelection);
+                              gravaAlarme(menuAlarmeSelection, horaAlarme2_config, minutoAlarme2_config);
                             }
                             menuA2 = constrain( (menuA2 + (encoderPos - lastReportedPos) ), menuMin, 4); //4 menus
                             giraEncoder();
@@ -517,6 +527,9 @@ void loop() {
                   SelectAlarme(menuAlarmeSelection);
                   if(SwitchPress) { ////TELA ALARME 3:
                     SwitchPress = false;
+                    uint16_t horamin_temp = leAlarme(menuAlarmeSelection);
+                    horaAlarme3_config = horamin_temp >> 8;
+                    minutoAlarme3_config = horamin_temp;
                     Serial.println("ALARME 3");
                     retornarA3 = false;
                     while(retornarA3 == false) {
@@ -616,6 +629,7 @@ void loop() {
                               Serial.println("RETORNAR");
                               SwitchPress = false;
                               retornarA3 = true;
+                              gravaAlarme(menuAlarmeSelection, horaAlarme3_config, minutoAlarme3_config);
                               SelectAlarme(menuAlarmeSelection);
                             }
                             menuA3 = constrain( (menuA3 + (encoderPos - lastReportedPos) ), menuMin, 4); //4 menus
