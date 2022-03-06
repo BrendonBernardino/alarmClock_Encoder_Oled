@@ -1,3 +1,4 @@
+void Menu_Alarm_Triggered(void);
 void Menu_init(void);
 void Menu_standy(uint8_t _brilho, int _hora, int _minuto);
 void Menu_standby2(uint8_t _brilho, int _hora, int _minuto);
@@ -15,6 +16,14 @@ void SelectAlarme(uint8_t _brilho, int _selection);
 void AlarmeA_config(uint8_t _brilho, int _selection, int _an, bool _state, int _hora, int _minuto);
 
 
+void Menu_Alarm_Triggered(void) {
+  u8g2.clearBuffer();          // clear the internal memory
+  u8g2.setFontMode(0);
+  u8g2.setDrawColor(1);
+  u8g2.setFont(u8g2_font_streamline_interface_essential_alert_t);
+  u8g2.drawGlyph(50, 30, 0x0033);
+  u8g2.sendBuffer();
+}
 
 void Menu_init(void) {
   u8g2.clearBuffer();          // clear the internal memory
@@ -417,114 +426,6 @@ void Time_Config(uint8_t _brilho, int _selection, int _hora, int _minuto) {
   u8g2.sendBuffer();
 }
 
-//void ConfigHora2(int _hora, int _minuto) {
-//  u8g2.clearBuffer();          // clear the internal memory
-//  u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
-//  u8g2.drawStr(49,8,"HORA");  // write something to the internal memory
-//  u8g2.setFont(u8g2_font_5x7_t_cyrillic);  // choose a suitable font
-//  u8g2.drawButtonUTF8(115, 6, U8G2_BTN_BW0|U8G2_BTN_HCENTER, 0,  2,  0, "OK");
-////  u8g2.drawStr(49,8,"OK");  // write something to the internal memory
-//
-//  u8g2.setFont(u8g2_font_inb21_mn);
-//  String horasstr = String(_hora);
-//  String minutesstr = String(_minuto);
-//  if(_hora < 10) {
-//    u8g2.setCursor(15,30);
-//    u8g2.print("0");
-//    u8g2.setCursor(32,30);
-//    u8g2.print(horasstr);
-//  }
-//  else {
-//    u8g2.setCursor(15,30);
-//    u8g2.print(horasstr);
-//  }
-//  if(_minuto < 10) {
-//    u8g2.setCursor(75,30);
-//    u8g2.print("0");
-//    u8g2.setCursor(92,30);
-//    u8g2.print(minutesstr);
-//  }
-//  else {
-//    u8g2.setCursor(75,30);
-//    u8g2.print(minutesstr);
-//  }
-//  
-////  u8g2.drawStr(15,30,"12");
-//  u8g2.drawLine(75, 31, 110, 31);
-//  u8g2.drawStr(55,30,":");
-////  u8g2.drawStr(75,30,"30");
-//  u8g2.sendBuffer();
-//}
-//
-//void ConfigHora3(int _hora, int _minuto) {
-//  u8g2.clearBuffer();          // clear the internal memory
-//  u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
-//  u8g2.drawStr(49,8,"HORA");  // write something to the internal memory
-//  u8g2.setFont(u8g2_font_5x7_t_cyrillic);  // choose a suitable font
-//  u8g2.drawButtonUTF8(115, 6, U8G2_BTN_INV|U8G2_BTN_HCENTER, 0,  2,  0, "OK");
-////  u8g2.drawStr(49,8,"OK");  // write something to the internal memory
-//
-//  u8g2.setFont(u8g2_font_inb21_mn);
-//  String horasstr = String(_hora);
-//  String minutesstr = String(_minuto);
-//  if(_hora < 10) {
-//    u8g2.setCursor(15,30);
-//    u8g2.print("0");
-//    u8g2.setCursor(32,30);
-//    u8g2.print(horasstr);
-//  }
-//  else {
-//    u8g2.setCursor(15,30);
-//    u8g2.print(horasstr);
-//  }
-//  if(_minuto < 10) {
-//    u8g2.setCursor(75,30);
-//    u8g2.print("0");
-//    u8g2.setCursor(92,30);
-//    u8g2.print(minutesstr);
-//  }
-//  else {
-//    u8g2.setCursor(75,30);
-//    u8g2.print(minutesstr);
-//  }
-//  
-////  u8g2.drawStr(15,30,"12");
-////  u8g2.drawLine(75, 31, 110, 31);
-//  u8g2.drawStr(55,30,":");
-////  u8g2.drawStr(75,30,"30");
-//  u8g2.sendBuffer();   
-//}
-
-//void ConfigAlarme(void) {
-//  u8g2.clearBuffer();          // clear the internal memory
-//  u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
-//  u8g2.drawStr(49,8,"HORA");  // write something to the internal memory
-//  u8g2.setFont(u8g2_font_5x7_t_cyrillic);  // choose a suitable font
-//  u8g2.drawButtonUTF8(115, 6, U8G2_BTN_BW0|U8G2_BTN_HCENTER, 0,  2,  0, "OK");
-////  u8g2.drawStr(49,8,"OK");  // write something to the internal memory
-//  u8g2.setFont(u8g2_font_inb21_mn);
-//  u8g2.drawStr(20,30,"12");
-//  u8g2.drawStr(60,30,":");
-//  u8g2.drawStr(80,30,"30");
-//  u8g2.sendBuffer();          // transfer internal memory to the display
-//}
-//
-//void ConfigData(void) {
-//  u8g2.clearBuffer();          // clear the internal memory
-//  u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
-//  u8g2.drawStr(49,8,"DATA");  // write something to the internal memory
-//  u8g2.setFont(u8g2_font_5x7_t_cyrillic);  // choose a suitable font
-//  u8g2.drawButtonUTF8(115, 6, U8G2_BTN_BW0|U8G2_BTN_HCENTER, 0,  2,  0, "OK");
-////  u8g2.drawStr(49,8,"OK");  // write something to the internal memory
-//  u8g2.setFont(u8g2_font_inb21_mn);
-//  u8g2.drawStr(0,30,"21");
-//  u8g2.drawStr(30,30,"/");
-//  u8g2.drawStr(45,30,"02");
-//  u8g2.drawStr(77,30,"/");
-//  u8g2.drawStr(92,30,"22");
-//  u8g2.sendBuffer();          // transfer internal memory to the display
-//}
-
 void Data_config(uint8_t _brilho, int _selection, int _dayweek, int _day, int _month, int _year) {
   u8g2.clearBuffer();          // clear the internal memory
   if(_brilho == 0)
@@ -747,12 +648,8 @@ void SelectAlarme(uint8_t _brilho, int _selection) {
     break;
     case 2:
       u8g2.drawButtonUTF8(115, 6, U8G2_BTN_BW0|U8G2_BTN_HCENTER, 0,  2,  0, "OK");
-      u8g2.drawLine(60, 31, 91, 31);
+      u8g2.drawLine(75, 31, 106, 31);
     break;
-//    case 3:
-//      u8g2.drawButtonUTF8(115, 6, U8G2_BTN_BW0|U8G2_BTN_HCENTER, 0,  2,  0, "OK");
-//      u8g2.drawLine(92, 31, 124, 31);
-//    break;
     case 3:
       u8g2.drawButtonUTF8(115, 6, U8G2_BTN_INV|U8G2_BTN_HCENTER, 0,  2,  0, "OK");
     break;
@@ -760,7 +657,7 @@ void SelectAlarme(uint8_t _brilho, int _selection) {
   
   u8g2.setFont(u8g2_font_inb21_mr);
   u8g2.drawStr(15,30,"A1");
-  u8g2.drawStr(60,30,"A2");
+  u8g2.drawStr(75,30,"A2");
 //  u8g2.drawStr(92,30,"A3");
   u8g2.sendBuffer();
 }
