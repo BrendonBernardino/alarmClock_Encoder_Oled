@@ -1,16 +1,9 @@
 void Menu_Alarm_Triggered(void);
 void Menu_init(void);
-void Menu_standy(uint8_t _brilho, int _hora, int _minuto);
-void Menu_standby2(uint8_t _brilho, int _hora, int _minuto);
-void Menu_standby_alarm(uint8_t _brilho, int _hora, int _minuto);
-void Menu_standby_alarm2(uint8_t _brilho, int _hora, int _minuto);
+void Menu_standy(uint8_t _selection, uint8_t _brilho, uint8_t _hora, uint8_t _minuto, uint8_t _dia, uint8_t _mes);
+void Menu_standby_alarm(uint8_t _selection, uint8_t _brilho, int _hora, int _minuto, uint8_t _dia, uint8_t _mes);
 void Menu(uint8_t _brilho, int _selection, int _weekday, int _dia, int _mes, int _hora, int _minuto, uint8_t _segundo);
-//void ConfigHora(void);
 void Time_Config(uint8_t _brilho, int _selection, int _hora, int _minuto);
-//void ConfigHora2(uint8_t _brilho, int _hora, int _minuto);
-//void ConfigHora3(uint8_t _brilho, int _hora, int _minuto);
-//void ConfigAlarme(void);
-//void ConfigData(void);
 void Data_config(uint8_t _brilho, int _selection, int _dayweek, int _day, int _month, int _year);
 void SelectAlarme(uint8_t _brilho, int _selection);
 void AlarmeA_config(uint8_t _brilho, int _selection, int _an, bool _state, int _hora, int _minuto);
@@ -20,8 +13,10 @@ void Menu_Alarm_Triggered(void) {
   u8g2.clearBuffer();          // clear the internal memory
   u8g2.setFontMode(0);
   u8g2.setDrawColor(1);
+  u8g2.setFont(u8g2_font_ncenB08_tr);
+  u8g2.drawStr(15,8,"Pressione o botao");
   u8g2.setFont(u8g2_font_streamline_interface_essential_alert_t);
-  u8g2.drawGlyph(50, 30, 0x0033);
+  u8g2.drawGlyph(55, 30, 0x0033);
   u8g2.sendBuffer();
 }
 
@@ -34,7 +29,7 @@ void Menu_init(void) {
   u8g2.sendBuffer();
 }
 
-void Menu_standby(uint8_t _brilho, int _hora, int _minuto) {
+void Menu_standby(uint8_t _selection, uint8_t _brilho, int _hora, int _minuto, uint8_t _dia, uint8_t _mes) {
   u8g2.clearBuffer();
   if(_brilho == 0)
     u8g2.setContrast(255);
@@ -57,8 +52,9 @@ void Menu_standby(uint8_t _brilho, int _hora, int _minuto) {
     u8g2.print(horasstr);
   }
 
-//  u8g2.drawStr(57,32," ");
-  u8g2.drawStr(57,30,":");
+  //  u8g2.drawStr(57,32," ");
+  if(_selection == 1)
+    u8g2.drawStr(57,30,":");
 
   if(_minuto < 10) {
     u8g2.setCursor(68,32);
@@ -70,50 +66,16 @@ void Menu_standby(uint8_t _brilho, int _hora, int _minuto) {
     u8g2.setCursor(68,32);
     u8g2.print(minutesstr);
   }
-  
+
+//  if(_dia == 21 && _mes == 2) {
+//    u8g2.setFont(u8g2_font_unifont_t_76);
+//    u8g2.drawGlyph(110, 23, 0x2665);
+//  }
 //  u8g2.drawStr(25,32,"12:30");
   u8g2.sendBuffer();
 }
 
-void Menu_standby2(uint8_t _brilho, int _hora, int _minuto) {
-  u8g2.clearBuffer();
-  if(_brilho == 0)
-    u8g2.setContrast(255);
-  else
-    u8g2.setContrast(1);
-  u8g2.setFontMode(0);
-  u8g2.setDrawColor(1);
-  u8g2.setFont(u8g2_font_timB24_tr);
-  String horasstr = String(_hora);
-  String minutesstr = String(_minuto);
-  if(_hora < 10) {
-    u8g2.setCursor(25,32);
-    u8g2.print("0");
-    u8g2.setCursor(41,32);
-    u8g2.print(horasstr);
-  }
-  else {
-    u8g2.setCursor(25,32);
-    u8g2.print(horasstr);
-  }
-//  u8g2.drawStr(57,32," ");
-//  u8g2.drawStr(57,35,":");
-
-  if(_minuto < 10) {
-    u8g2.setCursor(68,32);
-    u8g2.print("0");
-    u8g2.setCursor(84,32);
-    u8g2.print(minutesstr);
-  }
-  else {
-    u8g2.setCursor(68,32);
-    u8g2.print(minutesstr);
-  }
-//  u8g2.drawStr(25,32,"12:30");
-  u8g2.sendBuffer();
-}
-
-void Menu_standby_alarm(uint8_t _brilho, int _hora, int _minuto) {
+void Menu_standby_alarm(uint8_t _selection, uint8_t _brilho, int _hora, int _minuto, uint8_t _dia, uint8_t _mes) {
   u8g2.clearBuffer();
   if(_brilho == 0)
     u8g2.setContrast(255);
@@ -140,7 +102,8 @@ void Menu_standby_alarm(uint8_t _brilho, int _hora, int _minuto) {
     u8g2.print(horasstr);
   }
 //  u8g2.drawStr(57,32," ");
-  u8g2.drawStr(57,30,":");
+  if(_selection == 1)
+    u8g2.drawStr(57,30,":");
 
   if(_minuto < 10) {
     u8g2.setCursor(68,32);
@@ -152,55 +115,23 @@ void Menu_standby_alarm(uint8_t _brilho, int _hora, int _minuto) {
     u8g2.setCursor(68,32);
     u8g2.print(minutesstr);
   }
-//  u8g2.drawStr(25,32,"12:30");
-  u8g2.sendBuffer();
-}
-
-void Menu_standby_alarm2(uint8_t _brilho, int _hora, int _minuto) {
-  u8g2.clearBuffer();
-  if(_brilho == 0)
-    u8g2.setContrast(255);
-  else
-    u8g2.setContrast(1);
-    
-  u8g2.setFontMode(0);
-  u8g2.setDrawColor(1);
-  u8g2.setFont(u8g2_font_unifont_t_symbols);
-  u8g2.drawGlyph(0, 21, 0x23f0);
-//  u8g2.setFont(u8g2_font_streamline_interface_essential_alert_t);
-//  u8g2.drawGlyph(5, 21, 0x0032);
-  u8g2.setFont(u8g2_font_timB24_tr);
-  String horasstr = String(_hora);
-  String minutesstr = String(_minuto);
-  if(_hora < 10) {
-    u8g2.setCursor(25,32);
-    u8g2.print("0");
-    u8g2.setCursor(41,32);
-    u8g2.print(horasstr);
-  }
-  else {
-    u8g2.setCursor(25,32);
-    u8g2.print(horasstr);
-  }
-//  u8g2.drawStr(57,32," ");
-//  u8g2.drawStr(57,35,":");
-
-  if(_minuto < 10) {
-    u8g2.setCursor(68,32);
-    u8g2.print("0");
-    u8g2.setCursor(84,32);
-    u8g2.print(minutesstr);
-  }
-  else {
-    u8g2.setCursor(68,32);
-    u8g2.print(minutesstr);
-  }
+//  if(_dia == 21 && _mes == 2) {
+//    u8g2.setFont(u8g2_font_unifont_t_76);
+//    u8g2.drawGlyph(110, 23, 0x2665);
+//  }
 //  u8g2.drawStr(25,32,"12:30");
   u8g2.sendBuffer();
 }
 
 void Menu(uint8_t _brilho, int _selection, int _weekday, int _dia, int _mes, int _hora, int _minuto, uint8_t _segundo) {
-  
+  Serial.print(_hora);
+  Serial.print(":");
+  Serial.print(_minuto);
+  Serial.print(":");
+  Serial.println(_segundo);
+  Serial.print(_dia);
+  Serial.print("/");
+  Serial.println(_mes);
   u8g2.clearBuffer();          // clear the internal memory
   if(_brilho == 0)
     u8g2.setContrast(255);

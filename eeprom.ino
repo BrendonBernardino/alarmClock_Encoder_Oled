@@ -16,11 +16,8 @@ int Status;
 
 void gravaOnOff(uint8_t _selection, uint8_t _onoff);
 int leOnOff(uint8_t _selection);
-void gravaFlag(uint8_t _flag);
-int leFlag();
 void gravaAlarme(uint8_t _alarme_num, uint16_t _hora, uint16_t _minutos);
 int leAlarme(uint8_t _alarme_num, uint8_t _hora_min);
-//int leAlarme2(uint8_t _alarme_num);
 
 void gravaOnOff(uint8_t _selection, uint8_t _onoff) {
   switch(_selection) {
@@ -44,16 +41,6 @@ int leOnOff(uint8_t _selection) {
     break;
   }
   return (int)DataONOFF;
-}
-
-void gravaFlag(uint8_t _flag) {
-  Status = EEPROM.write(AddressWriteFlag, _flag);
-}
-
-int leFlag() {
-  uint16_t DataFlag;
-  Status = EEPROM.read(AddressWriteA1, &DataFlag);
-  return (int)DataFlag;
 }
 
 void gravaAlarme(uint8_t _alarme_num, uint16_t _hora, uint16_t _minutos) {
