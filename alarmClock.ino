@@ -20,6 +20,9 @@ enum PinAssignments {
   led_Red =         PA5,
   led_Red2 =        PA4,
   led_Red3 =        PA3,
+  led_Red4 =        PA2,
+  led_Red5 =        PA7,
+  led_Red6 =        PB0,
   oled_Scl =        PB6,
   oled_Sda =        PB7,
   rtc_Scl =         PB10,
@@ -88,8 +91,8 @@ boolean B_set = false;
 
 extern int Status;
 
-//U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, PB6, PB7, U8X8_PIN_NONE); 
-U8G2_SSD1306_128X32_UNIVISION_F_SW_I2C u8g2(U8G2_R0, PB6, PB7, U8X8_PIN_NONE);
+U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, PB6, PB7, U8X8_PIN_NONE); 
+//U8G2_SSD1306_128X32_UNIVISION_F_SW_I2C u8g2(U8G2_R0, PB6, PB7, U8X8_PIN_NONE);
 
 void timeStr(uint8_t _hora, uint8_t _minuto, uint8_t _segundo);
 void dateStr(uint8_t dia, uint8_t _mes, uint16_t _ano);
@@ -115,6 +118,7 @@ void alarmTriggeredOrNot();
 void giraEncoder();
 void wait4Standby();
 void atualizaDisplay();
+void LedConfirma(void);
 void LightLevel(void);
 
 void setup() {
@@ -125,6 +129,9 @@ void setup() {
   pinMode(led_Red, OUTPUT);
   pinMode(led_Red2, OUTPUT);
   pinMode(led_Red3, OUTPUT);
+  pinMode(led_Red4, OUTPUT);
+  pinMode(led_Red5, OUTPUT);
+  pinMode(led_Red6, OUTPUT);
   pinMode(micro_Sw, INPUT);
   pinMode(ldr, INPUT);
   pinMode(buzzer_Passivo, OUTPUT);
@@ -137,20 +144,14 @@ void setup() {
   digitalWrite(selectButton, HIGH);
   digitalWrite(micro_Sw , HIGH);
 
-  // encoder pin on interrupt 0 (pin 2)
   attachInterrupt(digitalPinToInterrupt(encoderPinA), doEncoderA, CHANGE);
-  // encoder pin on interrupt 1 (pin 3)
   attachInterrupt(digitalPinToInterrupt(encoderPinB), doEncoderB, CHANGE);
-
   attachInterrupt(digitalPinToInterrupt(selectButton), doSelect, FALLING);
-
   attachInterrupt(digitalPinToInterrupt(micro_Sw), stopAlarmClock, FALLING);
-
   attachInterrupt(digitalPinToInterrupt(rtc_Sqw), alarmTriggered, FALLING);
 
   Serial.begin(115200);
   Wire.begin();
-
   u8g2.begin();
   Rtc.Begin();
 
@@ -159,11 +160,9 @@ void setup() {
 
   Rtc.Enable32kHzPin(false);
   Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeAlarmBoth);
-
   Rtc.LatchAlarmsTriggeredFlags();
 }
 
-// main loop, work is done by interrupt service routines, this one only prints stuff
 void loop() {
   //// ESPERA CLICK DO BOTAO PARA INICIALIZAR
   while(flag_init == 0) {
@@ -173,14 +172,20 @@ void loop() {
   ////
   if(flag_init2 == 0) {
     digitalWrite(led_Red, HIGH);
-    delay(1000);
-    digitalWrite(led_Red, LOW);
     digitalWrite(led_Red2, HIGH);
     delay(1000);
+    digitalWrite(led_Red, LOW);
     digitalWrite(led_Red2, LOW);
     digitalWrite(led_Red3, HIGH);
+    digitalWrite(led_Red4, HIGH);
     delay(1000);
     digitalWrite(led_Red3, LOW);
+    digitalWrite(led_Red4, LOW);
+    digitalWrite(led_Red5, HIGH);
+    digitalWrite(led_Red6, HIGH);
+    delay(1000);
+    digitalWrite(led_Red5, LOW);
+    digitalWrite(led_Red6, LOW);
     flag_init2 = 1;
   }
 
@@ -282,7 +287,7 @@ void loop() {
                     settime = 1;
                     LightLevel();
                   }
-                  dateStr(1, 1, 1);
+//                  dateStr(1, 1, 1);
                   menuHora = constrain( (menuHora + (encoderPos - lastReportedPos) ), menuMin, menuMax); //3 menus
                   giraEncoder();
                 }
@@ -811,12 +816,45 @@ void tocabuzzer() {
   digitalWrite(led_Red, HIGH);
   digitalWrite(led_Red2, HIGH);
   digitalWrite(led_Red3, HIGH);
-  delay(300);
+  delay(100);
   digitalWrite(buzzer_Ativo, LOW);
   digitalWrite(led_Red, LOW);
   digitalWrite(led_Red2, LOW);
   digitalWrite(led_Red3, LOW);
-  delay(300);
+  delay(100);
+
+  digitalWrite(buzzer_Ativo, HIGH);
+  digitalWrite(led_Red, HIGH);
+  digitalWrite(led_Red2, HIGH);
+  digitalWrite(led_Red3, HIGH);
+  delay(100);
+  digitalWrite(buzzer_Ativo, LOW);
+  digitalWrite(led_Red, LOW);
+  digitalWrite(led_Red2, LOW);
+  digitalWrite(led_Red3, LOW);
+  delay(100);
+
+  digitalWrite(buzzer_Ativo, HIGH);
+  digitalWrite(led_Red, HIGH);
+  digitalWrite(led_Red2, HIGH);
+  digitalWrite(led_Red3, HIGH);
+  delay(100);
+  digitalWrite(buzzer_Ativo, LOW);
+  digitalWrite(led_Red, LOW);
+  digitalWrite(led_Red2, LOW);
+  digitalWrite(led_Red3, LOW);
+  delay(100);
+
+  digitalWrite(buzzer_Ativo, HIGH);
+  digitalWrite(led_Red, HIGH);
+  digitalWrite(led_Red2, HIGH);
+  digitalWrite(led_Red3, HIGH);
+  delay(100);
+  digitalWrite(buzzer_Ativo, LOW);
+  digitalWrite(led_Red, LOW);
+  digitalWrite(led_Red2, LOW);
+  digitalWrite(led_Red3, LOW);
+  delay(1000);
 }
 
 void alarmTriggeredOrNot() {
@@ -1006,6 +1044,22 @@ void LightLevel(void) {
     flag_lowBright = 0;
 }
 
+void LedConfirma(void) {
+  digitalWrite(led_Red, HIGH);
+  digitalWrite(led_Red2, HIGH);
+  digitalWrite(led_Red3, HIGH);
+  digitalWrite(led_Red4, HIGH);
+  digitalWrite(led_Red5, HIGH);
+  digitalWrite(led_Red6, HIGH);
+  delay(1000);
+  digitalWrite(led_Red, LOW);
+  digitalWrite(led_Red2, LOW);
+  digitalWrite(led_Red3, LOW);
+  digitalWrite(led_Red4, LOW);
+  digitalWrite(led_Red5, LOW);
+  digitalWrite(led_Red6, LOW);
+}
+
 // Interrupt on A changing state
 void doEncoderA() {
     // debounce
@@ -1048,14 +1102,8 @@ void doEncoderB() {
 void doSelect() {
   botaoApertado = true;
   digitalWrite(buzzer_Ativo, HIGH);
-  digitalWrite(led_Red, HIGH);
-  digitalWrite(led_Red2, HIGH);
-  digitalWrite(led_Red3, HIGH);
-  delay(500);
+  LedConfirma();
   digitalWrite(buzzer_Ativo, LOW);
-  digitalWrite(led_Red, LOW);
-  digitalWrite(led_Red2, LOW);
-  digitalWrite(led_Red3, LOW);
   tempoDisplay = millis();
   flag_init = 1;
   if(flag_init == 1)
