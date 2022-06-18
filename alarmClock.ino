@@ -1,29 +1,29 @@
 #include <U8g2lib.h>
-#include <Wire.h> // must be included here so that Arduino library object file references work
+#include <Wire.h>
 #include <RtcDS3231.h>
 TwoWire WIRE2 (2,I2C_FAST_MODE);
 #define Wire WIRE2
 RtcDS3231<TwoWire> Rtc(Wire);
 
-const PROGMEM uint8_t menuMin = 1; // VALOR MÍNIMO DE NAVEGAÇÃO DO MENU
-const PROGMEM uint8_t menuMax = 3; // VALOR MÁXIMO DE NAVEGAÇÃO DO MENU
+const PROGMEM uint8_t menuMin = 1;
+const PROGMEM uint8_t menuMax = 3;
 
 enum PinAssignments {
   encoderPinA =     PA1,   // right
   encoderPinB =     PA0,   // left
   selectButton =    PB9,
-  buzzer_Passivo =  PA11,
+//  buzzer_Passivo =  PA11,
   buzzer_Ativo =    PA12,
   ldr =             PB1,
   micro_Sw =        PB13,
-  led_Yellow =      PA6,
-  led_Red =         PA5,
-  led_Red2 =        PA4,
-  led_Red3 =        PA3,
-  led_Red4 =        PA2,
-  led_Red5 =        PA7,
-  led_Red6 =        PB0,
-  oled_Scl =        PB6,
+  led_Red6 =        PA7,
+  led_Red5 =        PA6,
+  led_Red4 =        PA5,
+  led_Red3 =        PA4,
+  led_Red2 =        PA3,
+  led_Red =         PA2,
+  led_Yellow =      PB0,
+  oled_Scl =        PB8,
   oled_Sda =        PB7,
   rtc_Scl =         PB10,
   rtc_Sda =         PB11,
@@ -75,11 +75,6 @@ uint8_t flag_lowBright = 0;
 uint8_t retornar = 0;
 bool retornarHora = false;
 
-//bool retornarA = false;
-//bool retornarAlarme = false;
-//
-//bool retornarData = false;
-
 uint8_t flag_init = 0;
 uint8_t flag_init2 = 0;
 
@@ -103,7 +98,7 @@ extern void gravaAlarme(uint8_t _alarme_num, uint16_t _hora, uint16_t _minutos);
 extern int leAlarme(uint8_t _alarme_num, uint8_t _hora_min);
 
 //TELAS
-extern void Menu_Alarm_Triggered(void);
+extern void Menu_Alarm_Triggered(uint8_t _selection);
 extern void Menu_init(void);
 extern void Menu_standby(uint8_t _selection, uint8_t _brilho, int _hora, int _minuto, uint8_t _dia, uint8_t _mes);
 extern void Menu_standby_alarm(uint8_t _selection, uint8_t _brilho, int _hora, int _minuto, uint8_t _dia, uint8_t _mes);
@@ -122,6 +117,7 @@ void LedConfirma(void);
 void LightLevel(void);
 
 void setup() {
+  pinMode(PC13, OUTPUT);
   pinMode(encoderPinA, INPUT);
   pinMode(encoderPinB, INPUT);
   pinMode(selectButton, INPUT);
@@ -134,15 +130,17 @@ void setup() {
   pinMode(led_Red6, OUTPUT);
   pinMode(micro_Sw, INPUT);
   pinMode(ldr, INPUT);
-  pinMode(buzzer_Passivo, OUTPUT);
+//  pinMode(buzzer_Passivo, OUTPUT);
   pinMode(buzzer_Ativo, OUTPUT);
   pinMode(rtc_Sqw, INPUT);
 
   // turn on pullup resistors
+//  digitalWrite(PC13, HIGH);
   digitalWrite(encoderPinA, HIGH);
   digitalWrite(encoderPinB, HIGH);
   digitalWrite(selectButton, HIGH);
   digitalWrite(micro_Sw , HIGH);
+//  digitalWrite(buzzer_Ativo, HIGH);
 
   attachInterrupt(digitalPinToInterrupt(encoderPinA), doEncoderA, CHANGE);
   attachInterrupt(digitalPinToInterrupt(encoderPinB), doEncoderB, CHANGE);
@@ -155,11 +153,29 @@ void setup() {
   u8g2.begin();
   Rtc.Begin();
 
-  RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
-  Rtc.SetDateTime(compiled);
+//  RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
+//  Rtc.SetDateTime(compiled);
 
   Rtc.Enable32kHzPin(false);
   Rtc.SetSquareWavePin(DS3231SquareWavePin_ModeAlarmBoth);
+
+  DS3231AlarmOne alarm1(
+          1,
+          7,
+          30, 
+          0,
+          DS3231AlarmOneControl_HoursMinutesSecondsMatch);
+  Rtc.SetAlarmOne(alarm1);
+  gravaAlarme(1, 7, 30);
+
+  DS3231AlarmTwo alarm2(
+      1,
+      8,
+      10,
+      DS3231AlarmTwoControl_HoursMinutesMatch);
+  Rtc.SetAlarmTwo(alarm2);
+  gravaAlarme(2, 8, 10);
+  
   Rtc.LatchAlarmsTriggeredFlags();
 }
 
@@ -167,28 +183,32 @@ void loop() {
   //// ESPERA CLICK DO BOTAO PARA INICIALIZAR
   while(flag_init == 0) {
     Menu_init();
-    digitalWrite(PA5, LOW);
+    digitalWrite(PC13, LOW);
+    Serial.println("INIT");
   }
   ////
   if(flag_init2 == 0) {
-    digitalWrite(led_Red, HIGH);
-    digitalWrite(led_Red2, HIGH);
+    Serial.println("INIT2");
+    digitalWrite(PC13, HIGH);
+    digitalWrite(led_Red, HIGH);//PA2
+    digitalWrite(led_Red6, HIGH);//PA7
+    delay(1000);
+    digitalWrite(led_Red2, HIGH);//PA3
+    digitalWrite(led_Red5, HIGH);//PA6
+    delay(1000);
+    digitalWrite(led_Red3, HIGH);//PA4
+    digitalWrite(led_Red4, HIGH);//PA5
     delay(1000);
     digitalWrite(led_Red, LOW);
+    digitalWrite(led_Red6, LOW);
     digitalWrite(led_Red2, LOW);
-    digitalWrite(led_Red3, HIGH);
-    digitalWrite(led_Red4, HIGH);
-    delay(1000);
+    digitalWrite(led_Red5, LOW);
     digitalWrite(led_Red3, LOW);
     digitalWrite(led_Red4, LOW);
-    digitalWrite(led_Red5, HIGH);
-    digitalWrite(led_Red6, HIGH);
-    delay(1000);
-    digitalWrite(led_Red5, LOW);
-    digitalWrite(led_Red6, LOW);
     flag_init2 = 1;
   }
 
+  Serial.println("FUNCIONANDO");
   rotating = true;  // reset the debouncer
   menu = constrain( (menu + (encoderPos - lastReportedPos) ), menuMin, menuMax); //3 menus
 
@@ -215,6 +235,8 @@ void loop() {
           SwitchPress = false;
           botaoApertado = false;
           retornar = 0;
+          hora_config = now.Hour();
+          minuto_config = now.Minute();
           while(retornar == 0) {
             menuHora = constrain( (menuHora + (encoderPos - lastReportedPos) ), menuMin, menuMax); //3 menus
             giraEncoder();
@@ -652,7 +674,7 @@ void loop() {
               case 1://weekday
                 while(girouEncoder == false) {
                   LightLevel();
-                  Data_config(flag_lowBright, menuData, dayweek_config, day_config, month_config, year_config);
+                  Data_config(flag_lowBright, menuData, now.DayOfWeek()+1, now.Day(), now.Month(), now.Year());
                   if(SwitchPress) { ////AJUSTE DE DAYWEEK
                     SwitchPress = false;
                     botaoApertado = false;
@@ -771,8 +793,8 @@ void loop() {
                     retornar = 1;
                     CalendarControl(day_config, month_config, year_config);
                     dateStr(day_config, month_config, year_config);
-//                    RtcDateTime SetDate = RtcDateTime(buffdate, bufftime);
-//                    Rtc.SetDateTime(SetDate);
+                    RtcDateTime SetDate = RtcDateTime(buffdate, bufftime);
+                    Rtc.SetDateTime(SetDate);
                     ////
                     LightLevel();
                     Menu(flag_lowBright, menu, now.DayOfWeek(), now.Day(), now.Month(), now.Hour(), now.Minute(), now.Second());
@@ -816,44 +838,76 @@ void tocabuzzer() {
   digitalWrite(led_Red, HIGH);
   digitalWrite(led_Red2, HIGH);
   digitalWrite(led_Red3, HIGH);
-  delay(100);
+  digitalWrite(led_Red4, HIGH);
+  digitalWrite(led_Red5, HIGH);
+  digitalWrite(led_Red6, HIGH);
+  Menu_Alarm_Triggered(1);
+  delay(80);
   digitalWrite(buzzer_Ativo, LOW);
   digitalWrite(led_Red, LOW);
   digitalWrite(led_Red2, LOW);
   digitalWrite(led_Red3, LOW);
-  delay(100);
+  digitalWrite(led_Red4, LOW);
+  digitalWrite(led_Red5, LOW);
+  digitalWrite(led_Red6, LOW);
+  Menu_Alarm_Triggered(0);
+  delay(80);
 
   digitalWrite(buzzer_Ativo, HIGH);
   digitalWrite(led_Red, HIGH);
   digitalWrite(led_Red2, HIGH);
   digitalWrite(led_Red3, HIGH);
-  delay(100);
+  digitalWrite(led_Red4, HIGH);
+  digitalWrite(led_Red5, HIGH);
+  digitalWrite(led_Red6, HIGH);
+  Menu_Alarm_Triggered(1);
+  delay(80);
   digitalWrite(buzzer_Ativo, LOW);
   digitalWrite(led_Red, LOW);
   digitalWrite(led_Red2, LOW);
   digitalWrite(led_Red3, LOW);
-  delay(100);
+  digitalWrite(led_Red4, LOW);
+  digitalWrite(led_Red5, LOW);
+  digitalWrite(led_Red6, LOW);
+  Menu_Alarm_Triggered(0);
+  delay(80);
 
   digitalWrite(buzzer_Ativo, HIGH);
   digitalWrite(led_Red, HIGH);
   digitalWrite(led_Red2, HIGH);
   digitalWrite(led_Red3, HIGH);
-  delay(100);
+  digitalWrite(led_Red4, HIGH);
+  digitalWrite(led_Red5, HIGH);
+  digitalWrite(led_Red6, HIGH);
+  Menu_Alarm_Triggered(1);
+  delay(80);
   digitalWrite(buzzer_Ativo, LOW);
   digitalWrite(led_Red, LOW);
   digitalWrite(led_Red2, LOW);
   digitalWrite(led_Red3, LOW);
-  delay(100);
+  digitalWrite(led_Red4, LOW);
+  digitalWrite(led_Red5, LOW);
+  digitalWrite(led_Red6, LOW);
+  Menu_Alarm_Triggered(0);
+  delay(80);
 
   digitalWrite(buzzer_Ativo, HIGH);
   digitalWrite(led_Red, HIGH);
   digitalWrite(led_Red2, HIGH);
   digitalWrite(led_Red3, HIGH);
-  delay(100);
+  digitalWrite(led_Red4, HIGH);
+  digitalWrite(led_Red5, HIGH);
+  digitalWrite(led_Red6, HIGH);
+  Menu_Alarm_Triggered(1);
+  delay(80);
   digitalWrite(buzzer_Ativo, LOW);
   digitalWrite(led_Red, LOW);
   digitalWrite(led_Red2, LOW);
   digitalWrite(led_Red3, LOW);
+  digitalWrite(led_Red4, LOW);
+  digitalWrite(led_Red5, LOW);
+  digitalWrite(led_Red6, LOW);
+  Menu_Alarm_Triggered(0);
   delay(1000);
 }
 
@@ -862,7 +916,6 @@ void alarmTriggeredOrNot() {
     DS3231AlarmFlag flag = Rtc.LatchAlarmsTriggeredFlags();
     while(microswApertado == false) {
       tocabuzzer();
-      Menu_Alarm_Triggered();
     }
   }
 }
@@ -1072,6 +1125,7 @@ void doEncoderA() {
     // adjust counter + if A leads B
     if ( A_set && !B_set ) {
       encoderPos += 1;
+      Serial.println("GIROU ENCODER");
       girouEncoder = true;
       digitalWrite(buzzer_Ativo, HIGH);
       delay(100);
@@ -1090,6 +1144,7 @@ void doEncoderB() {
     //  adjust counter - 1 if B leads A
     if (B_set && !A_set) {
       encoderPos -= 1;
+      Serial.println("GIROU ENCODER");
       girouEncoder = true;
       digitalWrite(buzzer_Ativo, HIGH);
       delay(100);
@@ -1100,6 +1155,7 @@ void doEncoderB() {
 }
 
 void doSelect() {
+  Serial.println("APERTOU BOTAO");
   botaoApertado = true;
   digitalWrite(buzzer_Ativo, HIGH);
   LedConfirma();
